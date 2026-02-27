@@ -4,21 +4,21 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Research](https://img.shields.io/badge/Status-Research-orange.svg)]()
 
- 📋 Overview
+Overview
 
 UttaraRisk-Next is a multi-task ensemble learning framework for comprehensive maternal health risk assessment in Uttarakhand, India. The model simultaneously predicts:
 1. Risk Percentage (0-100%, continuous regression)
 2. Abortion Probability (binary classification with calibrated probabilities)
 3. Maternal Mortality Risk (binary classification with calibrated probabilities)
 
-# Key Features
+ Key Features
 - Multi-task Learning: Shared feature engineering across 3 related outcomes
 - Excellent Calibration: ECE <0.025 for reliable probability estimates
 - Fairness-Aware: Comprehensive bias analysis across demographic groups
 - Resource-Efficient: 45MB model size, 2.1ms inference time
 - Clinical Utility: Designed for risk communication and shared decision-making
 
-# Performance Summary
+ Performance Summary
 
 | Task | Primary Metric | Value | Calibration (ECE) |
 |------|---------------|-------|-------------------|
@@ -28,9 +28,9 @@ UttaraRisk-Next is a multi-task ensemble learning framework for comprehensive ma
 
 ---
 
- 🚀 Quick Start
+Quick Start
 
-# Installation
+ Installation
 
 ```bash
 # Clone the repository
@@ -45,7 +45,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-# Requirements
+ Requirements
 
 ```txt
 numpy>=1.21.0
@@ -56,7 +56,7 @@ seaborn>=0.11.0
 scipy>=1.7.0
 ```
 
-# Basic Usage
+ Basic Usage
 
 ```python
 from uttararisk_final_model import UttaraRiskNextModel
@@ -84,9 +84,9 @@ print(f"Mortality probability: {mort_prob:.3%}")
 
 ---
 
- 📊 Running Experiments
+  Running Experiments
 
-# Complete Experimental Pipeline
+ Complete Experimental Pipeline
 
 Run all experiments (F1-scores, 5-fold CV, baselines) with a single command:
 
@@ -95,12 +95,12 @@ python run_all_experiments.py
 ```
 
 This script will:
-1. ✅ Calculate F1-scores and imbalance metrics on validation set
-2. ✅ Run 5-fold stratified cross-validation for both classification tasks
-3. ✅ Train 6 baseline regression models
-4. ✅ Train 7 baseline abortion classification models
-5. ✅ Train 4 baseline mortality classification models
-6. ✅ Save all results to JSON files
+1.  Calculate F1-scores and imbalance metrics on validation set
+2.  Run 5-fold stratified cross-validation for both classification tasks
+3.  Train 6 baseline regression models
+4.  Train 7 baseline abortion classification models
+5.  Train 4 baseline mortality classification models
+6.  Save all results to JSON files
 
 Output Files:
 - `validation_metrics_detailed.json` - Complete validation metrics
@@ -113,7 +113,7 @@ Expected Runtime: ~5 minutes on standard CPU
 
 ---
 
- 🔄 5-Fold Cross-Validation
+  5-Fold Cross-Validation
 
 # Running Cross-Validation
 
@@ -176,7 +176,7 @@ for metric, values in cv_results.items():
     print(f"{metric}: {mean_val:.3f} ± {std_val:.3f}")
 ```
 
-# Cross-Validation Results
+ Cross-Validation Results
 
 Abortion Classification (5-Fold CV):
 ```
@@ -212,7 +212,7 @@ Key Observations:
 
   Methodology
 
-# Data Preprocessing
+Data Preprocessing
 
 78 Engineered Features from 22 Raw Variables:
 
@@ -247,7 +247,7 @@ Run preprocessing:
 python src/data_preprocessing.py
 ```
 
-# Model Architecture
+ Model Architecture
 
 Ensemble Design:
 - Risk Regression: 70% Gradient Boosting + 30% Random Forest
@@ -267,7 +267,7 @@ max_depth = 10
 class_weight = {0: 0.503, 1: 83.17}  # For mortality task
 ```
 
-# Training
+ Training
 
 ```bash
 # Train full model`
@@ -278,7 +278,7 @@ python src/uttararisk_final_model.py
 
 ---
 
- 📈 Evaluation Metrics
+ Evaluation Metrics
 
 # Regression (Risk Prediction)
 - MAE: Mean Absolute Error (percentage points)
@@ -294,7 +294,7 @@ python src/uttararisk_final_model.py
 - Brier Score: Probability accuracy
 - ECE: Expected Calibration Error (calibration quality)
 
-# Fairness Metrics
+ Fairness Metrics
 - Performance stratified by:
   - Rural vs Urban
   - Age groups (<20, 20-34, ≥35)
@@ -304,9 +304,9 @@ python src/uttararisk_final_model.py
 
 ---
 
- 🎯 Baseline Comparisons
+  Baseline Comparisons
 
-# Regression Baselines
+ Regression Baselines
 
 | Model | MAE (%) | R² | Training Time |
 |-------|---------|-----|---------------|
@@ -318,7 +318,7 @@ python src/uttararisk_final_model.py
 | MLP | 6.034 | 0.672 | 28.9s |
 | UttaraRisk-Next | 5.335 | 0.725 | 12.3s |
 
-# Classification Baselines (Abortion)
+ Classification Baselines (Abortion)
 
 | Model | ROC-AUC | F1-Score | ECE |
 |-------|---------|----------|-----|
@@ -335,7 +335,7 @@ Note: UttaraRisk-Next prioritizes calibration (ECE 0.020) over F1-score for clin
 
 ---
 
- 📊 Visualization
+  Visualization
 
 Generate all figures:
 ```bash
@@ -352,9 +352,9 @@ Generated Figures:
 
 ---
 
- ⚖️ Fairness Analysis
+  Fairness Analysis
 
-# Equity Validation Across Demographics
+ Equity Validation Across Demographics
 
 Rural vs Urban:
 - Risk difference: 7.1 percentage points (reflects genuine epidemiological variation)
@@ -374,9 +374,9 @@ Key Finding: ECE differences <0.025 across all groups demonstrates equitable cal
 
 ---
 
- 🏥 Clinical Decision Support
+ Clinical Decision Support
 
-# Risk Stratification Thresholds
+ Risk Stratification Thresholds
 
 | Risk Tier | Probability Range | Population (%) | Recommended Action |
 |-----------|------------------|----------------|-------------------|
@@ -385,7 +385,7 @@ Key Finding: ECE differences <0.025 across all groups demonstrates equitable cal
 | High Risk | 50-75% | 19.8% | Specialist consultation |
 | Very High Risk | >75% | 2.6% | Intensive management |
 
-# Interpretation Guidelines
+ Interpretation Guidelines
 
 For Abortion Prediction:
 - <15%: Low risk, routine care
@@ -401,21 +401,21 @@ For Mortality Prediction:
 
 ---
 
- ⚠️ Limitations
+ Limitations
 
-# Data Limitations
+ Data Limitations
 1. Synthetic Data: Proof-of-concept using epidemiologically representative but synthetic data
 2. Missing Variables: Lacks specific complications (preeclampsia, placenta previa), detailed obstetric history
 3. Cross-Sectional: No temporal dynamics or pregnancy progression modeling
 4. Sample Size: Limited positive cases for mortality (16 total, 3 in validation)
 
-# Model Limitations
+ Model Limitations
 1. Low F1-Scores: Reflects conservative prediction strategy prioritizing calibration
 2. Mortality Discrimination: Limited by extreme class imbalance (0.6%)
 3. Architecture: Separate task training misses potential joint optimization benefits
 4. Interpretability: Tree-based importance provides limited insight into complex interactions
 
-# Deployment Limitations
+ Deployment Limitations
 1. Prospective Validation Required: Real Uttarakhand clinical data needed before deployment
 2. Regulatory Approval: Medical device certification process required
 3. Healthcare Integration: EHR system integration and workflow optimization needed
@@ -423,7 +423,7 @@ For Mortality Prediction:
 
 ---
 
- 🔮 Future Directions
+ Future Directions
 
 1. Larger Real-World Dataset: Collect 5,000+ clinical records from Uttarakhand hospitals
 2. Longitudinal Modeling: Incorporate temporal features and pregnancy progression
@@ -435,13 +435,13 @@ For Mortality Prediction:
 8. Policy Integration: Pilot implementation with Uttarakhand health department
 
 
- 📜 License
+ License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
- 🤝 Contributing
+ Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -454,31 +454,29 @@ Areas for Contribution:
 
 ---
 
- 📧 Contact
+ Contact
 
-- Project Lead: [Your Name] - [your.email@institution.edu]
-- Institution: [Your Institution]
-- GitHub Issues: [https://github.com/yourusername/uttararisk-next/issues](https://github.com/yourusername/uttararisk-next/issues)
+- Project Lead: [Mohit Lal Sah] - [mohitsah0@gmail.com]
+- Institution: IFTM Univsersity
+- GitHub Issues: [https://github.com/mohitsah0/uttararisk-next/issues](https://github.com/mohitsah0/uttararisk-next/issues)
 
 ---
-
- 🙏 Acknowledgments
+ Acknowledgments
 
 - Healthcare workers in Uttarakhand for their dedication to maternal health
-- [Funding agencies, if any]
 - Open-source community (scikit-learn, NumPy, pandas)
 
 ---
 
- ⚕️ Ethical Statement
+Ethical Statement
 
 This is a proof-of-concept research project using synthetic data. The model is NOT approved for clinical use. Prospective validation with real clinical data, regulatory approval, and comprehensive clinical trials are required before any deployment in healthcare settings.
-
+No data of individuals has been shared for orignal data uesr can request to competent authorities.
 Important: This tool is designed to augment, not replace, clinical judgment. Healthcare providers must retain full autonomy in patient care decisions.
 
 ---
 
- 🌍 SDG Alignment
+SDG Alignment
 
 This project directly contributes to:
 - SDG 3.1: Reduce global maternal mortality ratio
@@ -487,6 +485,6 @@ This project directly contributes to:
 
 ---
 
-Last Updated: February 2026  
-Version: 1.0.0  
+Last Updated:27 February 2026  
+Version: 1.1.0  
 Status: Research / Proof-of-Concept
