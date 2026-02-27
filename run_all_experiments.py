@@ -33,6 +33,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.dummy import DummyRegressor, DummyClassifier
 from sklearn.calibration import CalibratedClassifierCV
 from scipy import stats
+from sklearn.impute import SimpleImputer
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -45,7 +46,7 @@ print("="*80)
 
 # Load preprocessed data
 print("\n[1/6] Loading preprocessed data...")
-data = np.load('/home/sandbox/preprocessed_data.npz', allow_pickle=True)
+data = np.load('./data/preprocessed_data.npz', allow_pickle=True)
 X_train = data['X_train']
 X_val = data['X_val']
 y_train_risk = data['y_train_risk']
@@ -54,6 +55,15 @@ y_train_mort = data['y_train_mortality']
 y_val_risk = data['y_val_risk']
 y_val_abort = data['y_val_abort']
 y_val_mort = data['y_val_mortality']
+
+# ensure numeric arrays and impute any missing values
+if isinstance(X_train, np.ndarray) and X_train.dtype == object:
+    X_train = pd.DataFrame(X_train).apply(pd.to_numeric, errors='coerce').values
+    X_val = pd.DataFrame(X_val).apply(pd.to_numeric, errors='coerce').values
+# simple mean imputation
+imputer = SimpleImputer(strategy='mean')
+X_train = imputer.fit_transform(X_train)
+X_val = imputer.transform(X_val)
 
 print(f"✓ Training samples: {X_train.shape[0]}")
 print(f"✓ Validation samples: {X_val.shape[0]}")
@@ -135,7 +145,7 @@ for metric, value in metrics_mort_val.items():
     print(f"  {metric:20s}: {value:.3f}")
 
 # Save validation metrics
-with open('/home/sandbox/validation_metrics_detailed.json', 'w') as f:
+with open('./data/validation_metrics_detailed.json', 'w') as f:
     json.dump({
         'abortion': metrics_abort_val,
         'mortality': metrics_mort_val
@@ -246,7 +256,7 @@ for metric, (mean, std) in cv_summary_mort.items():
     print(f"  {metric:20s}: {mean:.3f} ± {std:.3f}")
 
 # Save CV results
-with open('/home/sandbox/cross_validation_results.json', 'w') as f:
+with open('./data/cross_validation_results.json', 'w') as f:
     json.dump({
         'abortion': {
             'fold_results': cv_results_abort,
@@ -302,7 +312,7 @@ results_reg['UttaraRisk-Next (Ours)'] = {'MAE': mae_ensemble, 'R2': r2_ensemble}
 print(f"MAE: {mae_ensemble:.3f}, R²: {r2_ensemble:.3f}")
 
 # Save regression results
-with open('/home/sandbox/baseline_regression_results.json', 'w') as f:
+with open('./data/baseline_regression_results.json', 'w') as f:
     json.dump(results_reg, f, indent=2)
 
 # ============================================================================
@@ -361,7 +371,7 @@ results_clf_abort['UttaraRisk-Next (Ours)'] = {
     'Brier': metrics_abort_val['Brier Score']
 }
 
-with open('/home/sandbox/baseline_abortion_results.json', 'w') as f:
+with open('./data/baseline_abortion_results.json', 'w') as f:
     json.dump(results_clf_abort, f, indent=2)
 
 # ============================================================================
@@ -417,7 +427,7 @@ results_clf_mort['UttaraRisk-Next (Ours)'] = {
     'Brier': metrics_mort_val['Brier Score']
 }
 
-with open('/home/sandbox/baseline_mortality_results.json', 'w') as f:
+with open('./data/baseline_mortality_results.json', 'w') as f:
     json.dump(results_clf_mort, f, indent=2)
 
 # ============================================================================

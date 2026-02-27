@@ -327,7 +327,7 @@ class UttarakhandDataPreprocessor:
         
         # Save cleaned dataset
         cleaned_df = pd.concat([train_df, val_df], axis=0).reset_index(drop=True)
-        cleaned_df.to_csv('/home/sandbox/cleaned.csv', index=False)
+        cleaned_df.to_csv('./data/cleaned.csv', index=False)
         print("✓ Saved cleaned.csv")
         
         return X_train, X_val, y_train, y_val, train_df, val_df
@@ -335,10 +335,10 @@ class UttarakhandDataPreprocessor:
 # Run preprocessing
 if __name__ == "__main__":
     preprocessor = UttarakhandDataPreprocessor()
-    X_train, X_val, y_train, y_val, train_df, val_df = preprocessor.preprocess_pipeline('/home/sandbox/Data_Mother_1.csv')
+    X_train, X_val, y_train, y_val, train_df, val_df = preprocessor.preprocess_pipeline('./data/Data_Mother_1.csv')
     
     # Save preprocessed data
-    np.savez('/home/sandbox/preprocessed_data.npz',
+    np.savez('./data/preprocessed_data.npz',
              X_train=X_train, X_val=X_val,
              y_train_risk=y_train['risk'], y_train_abort=y_train['abort'], y_train_mortality=y_train['mortality'],
              y_val_risk=y_val['risk'], y_val_abort=y_val['abort'], y_val_mortality=y_val['mortality'])

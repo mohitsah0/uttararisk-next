@@ -1,0 +1,20 @@
+{
+  "regression": {
+    "risk_mae": 5.44119038077617,
+    "risk_r2": 0.7226956340538568,
+    "interval_coverage_90": 0.978
+  },
+  "abortion_classification": {
+    "roc_auc": 0.5427049006571467,
+    "pr_auc": 0.3483208185086785,
+    "brier_score": 0.20612666460057014,
+    "ece": 0.01331121050615133
+  },
+  "mortality_classification": {
+    "roc_auc": 0.42186452045606976,
+    "pr_auc": 0.012572550826722843,
+    "brier_score": 0.0061926711077121815,
+    "ece": 0.0011324867826782326,
+    "recall_at_90p_precision": 0.0
+  }
+}

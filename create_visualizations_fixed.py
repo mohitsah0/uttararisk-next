@@ -21,8 +21,8 @@ sns.set_palette("husl")
 def create_roc_pr_plots():
     """Create ROC and PR curves"""
     # Load data
-    data = np.load('/home/sandbox/preprocessed_data.npz', allow_pickle=True)
-    predictions = pd.read_csv('/home/sandbox/predictions.csv')
+    data = np.load('./data/preprocessed_data.npz', allow_pickle=True)
+    predictions = pd.read_csv('./data/predictions.csv')
     
     y_val_abort = data['y_val_abort']
     y_val_mortality = data['y_val_mortality']
@@ -105,13 +105,13 @@ def create_roc_pr_plots():
         axes[1,1].set_title('Precision-Recall Curve - Mortality')
     
     plt.tight_layout()
-    plt.savefig('/home/sandbox/roc_pr_curves.png', dpi=300, bbox_inches='tight')
+    plt.savefig('./data/roc_pr_curves.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 def create_calibration_plots():
     """Create calibration plots"""
-    data = np.load('/home/sandbox/preprocessed_data.npz', allow_pickle=True)
-    predictions = pd.read_csv('/home/sandbox/predictions.csv')
+    data = np.load('./data/preprocessed_data.npz', allow_pickle=True)
+    predictions = pd.read_csv('./data/predictions.csv')
     
     y_val_abort = data['y_val_abort']
     y_val_mortality = data['y_val_mortality']
@@ -152,13 +152,13 @@ def create_calibration_plots():
         axes[1].set_title('Calibration Plot - Mortality Prediction')
     
     plt.tight_layout()
-    plt.savefig('/home/sandbox/calibration_plots.png', dpi=300, bbox_inches='tight')
+    plt.savefig('./data/calibration_plots.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 def create_feature_importance_plot():
     """Create feature importance visualization"""
     # Load cleaned data to get feature names
-    cleaned_df = pd.read_csv('/home/sandbox/cleaned.csv')
+    cleaned_df = pd.read_csv('./data/cleaned.csv')
     feature_cols = [col for col in cleaned_df.columns if col not in 
                    ['patient_id', 'risk_to_woman_pct', 'aborted', 'mother_alive_dead']]
     
@@ -244,18 +244,18 @@ def create_feature_importance_plot():
     axes[1].grid(True, alpha=0.3, axis='y')
     
     plt.tight_layout()
-    plt.savefig('/home/sandbox/feature_importance.png', dpi=300, bbox_inches='tight')
+    plt.savefig('./data/feature_importance.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     # Save feature importance data
-    importance_df.to_csv('/home/sandbox/feature_importance.csv', index=False)
+    importance_df.to_csv('./data/feature_importance.csv', index=False)
 
 def create_fairness_analysis():
     """Create fairness analysis across demographic groups"""
     # Load data
-    data = np.load('/home/sandbox/preprocessed_data.npz', allow_pickle=True)
-    predictions = pd.read_csv('/home/sandbox/predictions.csv')
-    cleaned_df = pd.read_csv('/home/sandbox/cleaned.csv')
+    data = np.load('./data/preprocessed_data.npz', allow_pickle=True)
+    predictions = pd.read_csv('./data/predictions.csv')
+    cleaned_df = pd.read_csv('./data/cleaned.csv')
     
     # Get validation set indices (last 500 rows)
     val_df = cleaned_df.tail(500).reset_index(drop=True)
@@ -375,7 +375,7 @@ def create_fairness_analysis():
         axes[1,1].set_title('Abortion Prediction: High vs Normal Risk')
     
     plt.tight_layout()
-    plt.savefig('/home/sandbox/fairness_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('./data/fairness_analysis.png', dpi=300, bbox_inches='tight')
     plt.close()
     
     # Save fairness statistics
@@ -389,13 +389,13 @@ def create_fairness_analysis():
     if 'high_risk_pregnancy' in val_df.columns:
         fairness_stats['high_risk_pregnancy'] = high_risk_stats.to_dict()
     
-    with open('/home/sandbox/fairness_analysis.json', 'w') as f:
+    with open('./data/fairness_analysis.json', 'w') as f:
         json.dump(fairness_stats, f, indent=2)
 
 def create_risk_distribution_plot():
     """Create risk distribution visualization"""
-    predictions = pd.read_csv('/home/sandbox/predictions.csv')
-    cleaned_df = pd.read_csv('/home/sandbox/cleaned.csv')
+    predictions = pd.read_csv('./data/predictions.csv')
+    cleaned_df = pd.read_csv('./data/cleaned.csv')
     
     # Get validation set
     val_df = cleaned_df.tail(500).reset_index(drop=True)
@@ -453,7 +453,7 @@ def create_risk_distribution_plot():
     axes[1,1].grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/sandbox/risk_distribution.png', dpi=300, bbox_inches='tight')
+    plt.savefig('./data/risk_distribution.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 if __name__ == "__main__":

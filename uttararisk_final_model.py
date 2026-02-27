@@ -10,6 +10,7 @@ from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifi
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss, mean_absolute_error, r2_score
 from sklearn.model_selection import cross_val_score
+from sklearn.impute import SimpleImputer
 import json
 import warnings
 warnings.filterwarnings('ignore')
@@ -73,6 +74,36 @@ class UttaraRiskNextModel:
             X_train = X_train.values
         if X_val is not None and hasattr(X_val, 'values'):
             X_val = X_val.values
+
+        # If array has object dtype (mixed types or strings), coerce to numeric
+        if isinstance(X_train, np.ndarray) and X_train.dtype == object:
+            df_temp = pd.DataFrame(X_train)
+            df_temp = df_temp.apply(pd.to_numeric, errors='coerce')
+            X_train = df_temp.values
+            if X_val is not None:
+                df_temp2 = pd.DataFrame(X_val)
+                df_temp2 = df_temp2.apply(pd.to_numeric, errors='coerce')
+                X_val = df_temp2.values
+
+        # Impute missing values using mean strategy if necessary
+        # (GradientBoostingRegressor/Classifier don't accept NaN)
+        # wrap NaN check in try/except in case dtype still unsupported
+        nan_present = False
+        try:
+            nan_present = np.isnan(X_train).any()
+        except TypeError:
+            # fallback to pandas
+            nan_present = pd.DataFrame(X_train).isna().any().any()
+
+        if nan_present:
+            print("Detected NaNs in X_train, applying SimpleImputer...")
+            self.imputer = SimpleImputer(strategy='mean')
+            X_train = self.imputer.fit_transform(X_train)
+            if X_val is not None:
+                X_val = self.imputer.transform(X_val)
+        elif hasattr(self, 'imputer') and X_val is not None:
+            # if imputer exists (already fitted) use it on validation
+            X_val = self.imputer.transform(X_val)
             
         # Extract targets
         y_risk = y_train['risk']
@@ -174,6 +205,10 @@ class UttaraRiskNextModel:
         # Convert to numpy array if pandas DataFrame
         if hasattr(X, 'values'):
             X = X.values
+
+        # Apply imputer if it was fitted during training
+        if hasattr(self, 'imputer'):
+            X = self.imputer.transform(X)
             
         # Risk prediction with ensemble
         if self.use_ensemble and isinstance(self.risk_model, dict):
@@ -324,7 +359,7 @@ class UttaraRiskNextModel:
 # Load preprocessed data and train model
 if __name__ == "__main__":
     # Load data
-    data = np.load('/home/sandbox/preprocessed_data.npz', allow_pickle=True)
+    data = np.load('./data/preprocessed_data.npz', allow_pickle=True)
     X_train, X_val = data['X_train'], data['X_val']
     
     y_train = {
@@ -347,12 +382,12 @@ if __name__ == "__main__":
     metrics, predictions = model.evaluate(X_val, y_val)
     
     # Save results
-    with open('/home/sandbox/metrics.json', 'w') as f:
+    with open('./data/metrics.json', 'w') as f:
         json.dump(metrics, f, indent=2)
     
     # Create predictions dataframe and save
     pred_df = pd.DataFrame(predictions)
-    pred_df.to_csv('/home/sandbox/predictions.csv', index=False)
+    pred_df.to_csv('./data/predictions.csv', index=False)
     
     print("\n✓ Model training and evaluation completed!")
     print("✓ Saved metrics.json")
